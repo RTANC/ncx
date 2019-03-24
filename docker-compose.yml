@@ -11,7 +11,6 @@ services:
       - ./server/api:/app/api
       - ./server/models:/app/models
       - ./server/app.js:/app/app.js
-    working_dir: /app
     command: npm start
   
   client:
@@ -22,6 +21,5 @@ services:
     volumes:
       - ./client/public:/app/public
       - ./client/src:/app/src
-    working_dir: /app
     command: npm run serve
 
