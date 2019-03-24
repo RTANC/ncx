@@ -1,0 +1,22 @@
+# Use root/example as user/password credentials
+version: '3.7'
+
+services:
+  server:
+    build: ./server/
+    container_name: oxigen-server
+    ports:
+      - 3000:3000
+    volumes:
+      - ./server/api:/app/api
+      - ./server/models:/app/models
+      - ./server/app.js:/app/app.js
+    working_dir: /app
+    command: npm start
+  
+  report:
+    image: jsreport/jsreport:2.3.0-full
+    container_name: oxigen-report
+    ports: 
+      - 5488:5488
+
