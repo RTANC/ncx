@@ -3,7 +3,10 @@ const { Subject, Topic, Question } = require('../../models')
 
 exports.getSubjects = async (req, res, next) => {
     try {
-        const subjects = await Subject.findAll({ where: { deptId: req.userData.deptId } })
+        const subjects = await Subject.findAll({
+            where: { deptId: req.userData.deptId },
+            include: [Topic]
+        })
         res.status(200).send(subjects)
     } catch (error) {
         next(error)
@@ -21,7 +24,7 @@ exports.createSubject = async (req, res, next) => {
 
 exports.updateSubject = async (req, res, next) => {
     try {
-        await Subject.update({ code: req.body.code, name: req.body.name }, { where: { subjectId: req.params.sid, deptId: req.userData.deptId }})
+        await Subject.update({ name: req.body.name }, { where: { subjectId: req.params.sid, deptId: req.userData.deptId }})
         res.sendStatus(201)
     } catch (error) {
         next(error)
