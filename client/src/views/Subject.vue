@@ -8,13 +8,23 @@
         </v-flex>
         <template v-for="subject in subjects">
             <v-flex xs12 sm6 md4 :key="subject.subjectId">
-                <v-card>
+                <v-card elevation="5">
+                    <v-toolbar color="indigo darken-2" dark>
+                        <v-toolbar-title>รายวิชา: {{ subject.name }}</v-toolbar-title>
+                    </v-toolbar>
                     <v-card-text>
-                        {{ subject.name }}
+                        <p>หัวข้อ</p>
+                        <ul>
+                            <template v-for="topic in subject.topics">
+                                <li :key="topic.topicId">
+                                    {{ topic.name }}
+                                </li>
+                            </template>
+                        </ul>
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn flat icon="" color="success">
+                        <v-btn flat icon color="success">
                             <v-icon>help</v-icon>
                         </v-btn>
                         <v-btn flat icon color="warning">
@@ -27,10 +37,39 @@
                 </v-card>
             </v-flex>
         </template>
+        <v-flex xs12 sm12 md12>
+            <v-btn color="pink" dark fixed button right fab @click="dialog = true">
+                <v-icon>add</v-icon>
+            </v-btn>
+        </v-flex>
     </v-layout>
-        <v-btn color="pink" dark absolute button right fab>
-            <v-icon>add</v-icon>
-        </v-btn>
+    <v-dialog v-model="dialog" scrollable persistent max-width="700px" transition="dialog-transition">
+        <v-card>
+            <v-card-title primary-title>
+                <p class="title">จัดการข้อมูลรายวิชา</p>
+                <v-spacer></v-spacer>
+                <v-btn color="gray" icon flat @click="dialog = false">
+                    <v-icon>close</v-icon>
+                </v-btn>
+            </v-card-title>
+            <v-card-text>
+                <v-form v-model="valid" ref="form" lazy-validation>
+                    <v-container grid-list-md>
+                        <v-layout row wrap>
+                            <v-flex xs9>
+                                <v-text-field name="subject[name]" label="ชื่อรายวิชา"></v-text-field>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-btn color="pink" fab flat icon small>
+                                    <v-icon>add</v-icon>
+                                </v-btn>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                </v-form>
+            </v-card-text>
+        </v-card>
+    </v-dialog>
 </v-container>
 </template>
 
@@ -39,6 +78,13 @@ export default {
     name: 'Subject',
     data () {
         return {
+            dialog: false,
+            valid: false,
+            subject: {
+                subjectId: null,
+                name: null,
+                topics: []
+            },
             subjects: []
         }
     },
@@ -49,10 +95,24 @@ export default {
             //GET Subject
             this.subjects = [{
                 subjectId: 1,
-                name: 'เทคโนโลยีเพื่อการศึกษา'
+                name: 'เทคโนโลยีเพื่อการศึกษา',
+                topics: [{
+                    topicId: 1,
+                    name: 'การเลือกใช้เทคโนโลยีให้เหมาะสม'
+                }, {
+                    topicId: 2,
+                    name: 'การใช้เทคโนโลยีเพื่อเการรียนรู้ด้วยตนเอง'
+                }]
             }, {
                 subjectId: 2,
-                name: 'เทคโนโลยีเพื่อการวิจัย'
+                name: 'เทคโนโลยีเพื่อการวิจัย',
+                topics: [{
+                    topicId: 3,
+                    name: 'การเลือกใช้เทคโนโลยีให้เหมาะสมแก่การทำวิจัย'
+                }, {
+                    topicId: 4,
+                    name: 'การใช้เทคโนโลยีเพื่อสืบค้นงานวิจัย'
+                }]
             }]
         }
     }

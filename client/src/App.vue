@@ -12,10 +12,9 @@
     </v-toolbar>
 
     <v-content>
-      <v-img :src="require('../public/bg.png')">
+      <v-img :src="require('../public/bg.png')" contain>
         <router-view/>
       </v-img>
-      
     </v-content>
   </v-app>
 </template>
