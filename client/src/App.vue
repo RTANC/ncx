@@ -1,23 +1,21 @@
 <template>
   <v-app>
-    <v-toolbar app>
+    <v-toolbar app dark>
       <v-toolbar-title class="headline text-uppercase">
         <span>Vuetify</span>
         <span class="font-weight-light">MATERIAL DESIGN</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn
-        flat
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>open_in_new</v-icon>
-      </v-btn>
+      <v-toolbar-items>
+        <v-btn color="error" flat v-if="$store.getters.user" @click="onSignOut">ลงชื่อออก</v-btn>
+      </v-toolbar-items>
     </v-toolbar>
 
     <v-content>
-      <router-view/>
+      <v-img :src="require('../public/bg.png')">
+        <router-view/>
+      </v-img>
+      
     </v-content>
   </v-app>
 </template>
@@ -28,7 +26,18 @@ export default {
   name: 'App',
   data () {
     return {
-      //
+    }
+  },
+  methods: {
+    onSignOut () {
+      var auth2 = gapi.auth2.getAuthInstance()
+      auth2.signOut().then(x => {
+        this.$store.dispatch('signout')
+        this.$router.push('/')
+        console.log('Signout')
+      }).catch(error => {
+        console.log(error)
+      })
     }
   }
 }
