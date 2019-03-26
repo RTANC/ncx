@@ -15,11 +15,13 @@ const sequelize = new Sequelize('ncx', 'sa', 'Intell1', {
     }
 })
 
-const Teacher = sequelize.define('teachers', {
-    teacherId: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+const User = sequelize.define('users', {
+    userId: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
     googleId: { type: Sequelize.STRING, allowNull: false, unique: true },
     fullname: { type: Sequelize.STRING, allowNull: false },
-    deptId: { type: Sequelize.TINYINT, allowNull: true }
+    role: { type: Sequelize.TINYINT, allowNull: false },
+    deptId: { type: Sequelize.TINYINT, allowNull: true },
+    stdId: { type: Sequelize.CHAR(5), allowNull: true }
 })
 
 const Log = sequelize.define('logs', {
@@ -50,13 +52,8 @@ const Question = sequelize.define('questions', {
     choice5: { type: Sequelize.TEXT, allowNull: true }
 })
 
-const Student = sequelize.define('students', {
-    googleId: { type: Sequelize.STRING, allowNull: false, primaryKey: true },
-    fullname: { type: Sequelize.STRING, allowNull: false }
-})
-
-Teacher.hasMany(Log, { foreignKey: 'teacherId' })
-Log.belongsTo(Teacher, { foreignKey: 'teacherId' })
+User.hasMany(Log, { foreignKey: 'userId' })
+Log.belongsTo(User, { foreignKey: 'userId' })
 
 Subject.hasMany(Topic, { foreignKey: 'subjectId', onDelete: 'cascade'})
 Topic.belongsTo(Subject, { foreignKey: 'subjectId', onDelete: 'cascade'})
@@ -66,4 +63,4 @@ Question.belongsTo(Topic, { foreignKey: 'topicId', onDelete: 'cascade' })
 
 sequelize.sync({ force: true })
 
-module.exports = { Teacher, Log, Subject, Topic, Question, Student }
+module.exports = { User, Log, Subject, Topic, Question }

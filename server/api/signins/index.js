@@ -1,9 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const {teacherSignin, studentSignin} = require('./signin.controller')
+const { userSignin } = require('./signin.controller')
 
-router.post('/teachers', teacherSignin)
-
-router.post('/students', studentSignin)
+router.post('/', userSignin)
 
 module.exports = router
