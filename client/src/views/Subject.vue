@@ -63,18 +63,21 @@
                                 <v-text-field name="subject[name]" label="ชื่อรายวิชา" v-model="subject.name"></v-text-field>
                             </v-flex>
                             <v-flex xs3>
-                                <v-btn color="green" fab flat icon small>
+                                <v-btn color="green" fab flat icon small v-if="subject.subjectId == null" @click="createSubject">
                                     <v-icon>save</v-icon>
+                                </v-btn>
+                                <v-btn color="warning" fab flat icon small v-else>
+                                    <v-icon>create</v-icon>
                                 </v-btn>
                             </v-flex>
                             <v-flex xs12>
                                 <p>หัวข้อ</p>
                             </v-flex>
                             <v-flex xs9>
-                                <v-text-field label="ชื่อหัวข้อ" v-model="topic.name"></v-text-field>
+                                <v-text-field label="ชื่อหัวข้อ" v-model="topic.name" :disabled="subject.subjectId == null"></v-text-field>
                             </v-flex>
                             <v-flex xs3>
-                                <v-btn color="pink" fab flat icon small @click="createTopic">
+                                <v-btn color="pink" fab flat icon small @click="createTopic" :disabled="subject.subjectId == null">
                                     <v-icon>add</v-icon>
                                 </v-btn>
                             </v-flex>
@@ -98,6 +101,7 @@
 </template>
 
 <script>
+import api from '@/services/'
 export default {
     name: 'Subject',
     data () {
@@ -117,6 +121,15 @@ export default {
         }
     },
     methods: {
+        async createSubject () {
+            try {
+                const subject = await api.createSubject(this.subject.name)
+                this.subject.subjectId = subject.subjectId
+                this.subject.name = subject.name
+            } catch (error) {
+                console.log(error)
+            }
+        },
         createTopic () {
             const topic = {
                 topicId: 1,

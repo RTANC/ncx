@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import GoogleSigninButton from '@/components/GoogleSigninButton'
 export default {
   name: 'SigninTeacher',
@@ -33,6 +34,7 @@ export default {
       }
       console.log(user)
       this.$store.dispatch('signin', user)
+      axios.defaults.headers.common['Authorization'] = this.$store.getters.user.access_token
       this.$router.push('Subject')
     }
   }

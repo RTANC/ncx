@@ -15,7 +15,7 @@ exports.getSubjects = async (req, res, next) => {
 
 exports.createSubject = async (req, res, next) => {
     try {
-        const subject = await Subject.create({ code: req.body.code, name: req.body.name, deptId: req.userData.deptId })
+        const subject = await Subject.create({ name: req.body.name, deptId: req.userData.deptId })
         res.status(201).send(subject)
     } catch (error) {
         next(error)
