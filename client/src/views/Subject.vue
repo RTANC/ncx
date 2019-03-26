@@ -43,12 +43,12 @@
             </v-btn>
         </v-flex>
     </v-layout>
-    <v-dialog v-model="dialog" scrollable persistent max-width="700px" transition="dialog-transition">
+    <v-dialog v-model="dialog" scrollable persistent max-width="700px" transition="scale-transition">
         <v-card>
             <v-card-title primary-title>
                 <p class="title">จัดการข้อมูลรายวิชา</p>
                 <v-spacer></v-spacer>
-                <v-btn color="gray" icon flat @click="dialog = false">
+                <v-btn color="gray" icon flat @click="clear">
                     <v-icon>close</v-icon>
                 </v-btn>
             </v-card-title>
@@ -56,14 +56,38 @@
                 <v-form v-model="valid" ref="form" lazy-validation>
                     <v-container grid-list-md>
                         <v-layout row wrap>
+                            <v-flex xs12>
+                                <p>รายวิชา</p>
+                            </v-flex>
                             <v-flex xs9>
-                                <v-text-field name="subject[name]" label="ชื่อรายวิชา"></v-text-field>
+                                <v-text-field name="subject[name]" label="ชื่อรายวิชา" v-model="subject.name"></v-text-field>
                             </v-flex>
                             <v-flex xs3>
-                                <v-btn color="pink" fab flat icon small>
+                                <v-btn color="green" fab flat icon small>
+                                    <v-icon>save</v-icon>
+                                </v-btn>
+                            </v-flex>
+                            <v-flex xs12>
+                                <p>หัวข้อ</p>
+                            </v-flex>
+                            <v-flex xs9>
+                                <v-text-field label="ชื่อหัวข้อ" v-model="topic.name"></v-text-field>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-btn color="pink" fab flat icon small @click="createTopic">
                                     <v-icon>add</v-icon>
                                 </v-btn>
                             </v-flex>
+                            <template v-for="(topic, index) in subject.topics">
+                                <v-flex xs9 :key="index">
+                                    <v-text-field label="ชื่อหัวข้อ" v-model="topic.name"></v-text-field>
+                                </v-flex>
+                                <v-flex xs3 :key="topic.topicId">
+                                    <v-btn color="warning" fab flat icon small>
+                                        <v-icon>create</v-icon>
+                                    </v-btn>
+                                </v-flex>
+                            </template>
                         </v-layout>
                     </v-container>
                 </v-form>
@@ -85,7 +109,30 @@ export default {
                 name: null,
                 topics: []
             },
+            topic: {
+                topicId: null,
+                name: null
+            },
             subjects: []
+        }
+    },
+    methods: {
+        createTopic () {
+            const topic = {
+                topicId: 1,
+                name: this.topic.name
+            }
+            this.subject.topics.unshift(topic)
+            this.$refs.form.inputs[1].reset()
+        },
+        clear () {
+            this.dialog = false;
+            this.$refs.form.reset();
+            this.subject = {
+                subjectId: null,
+                name: null,
+                topics: [{ topicId: null, name: null }]
+            }
         }
     },
     beforeMount () {
