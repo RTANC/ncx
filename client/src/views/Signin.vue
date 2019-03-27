@@ -13,29 +13,66 @@
         </v-card>
       </v-flex>
     </v-layout>
+    <v-dialog v-model="dialog" persistent max-width="290">
+      <v-card>
+        <v-card-title class="headline">แจ้งเตือน</v-card-title>
+        <v-card-text>ไม่พบ Account ของท่านในระบบ, ท่านต้องการลงทะเบียนเข้าใช้ระบบหรือไม่?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn flat @click="dialog = false;signOut();">ไม่ต้องการ</v-btn>
+          <v-btn color="primary" @click="dialog = false" :to="{ path: '/register' }">ต้องการ</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import axios from 'axios'
+import api from '@/services'
 import GoogleSigninButton from '@/components/GoogleSigninButton'
 export default {
   name: 'SigninTeacher',
   components: { GoogleSigninButton },
+  data () {
+    return {
+      dialog: false
+    }
+  },
   methods: {
-    onSigned (googleUser) {
-      const profile = googleUser.getBasicProfile()
-      const user = {
+    async onSigned (googleUser) {
+      try {
+        const profile = googleUser.getBasicProfile()
+        const user = {
         id_token: googleUser.getAuthResponse().id_token,
-        access_token: googleUser.getAuthResponse().access_token,
         avatar: profile.getImageUrl(),
         fullname: profile.getName(),
-        email: profile.getEmail()
+        email: profile.getEmail(),
+        userId: null,
+        role: null,
+        deptId: null,
+        stdId: null,
+        token: null
       }
-      console.log(user)
       this.$store.dispatch('signin', user)
-      axios.defaults.headers.common['Authorization'] = this.$store.getters.user.access_token
-      this.$router.push('Subject')
+      const response = await api.signin(user.id_token)
+      // axios.defaults.headers.common['Authorization'] = this.$store.getters.user.access_token
+      // this.$router.push('Subject')
+      } catch (error) {
+        if (error.response.status == 401) {
+          this.dialog = true
+        }
+      }
+    },
+    signOut () {
+      var auth2 = gapi.auth2.getAuthInstance()
+      auth2.signOut().then(x => {
+        this.$store.dispatch('signout')
+        this.$router.push('/')
+        console.log('Signout')
+      }).catch(error => {
+        console.log(error)
+      })
     }
   }
 }

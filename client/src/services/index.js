@@ -6,6 +6,11 @@ const api = axios.create({
 })
 
 export default {
+    signin (id_token) {
+        return api.post('/signins',{}, {
+            headers: { 'Authorization': 'Basic ' + id_token }
+        })
+    },
     createSubject (name) {
         return api.post('/subjects', { name: name })
     }

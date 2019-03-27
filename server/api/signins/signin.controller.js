@@ -8,7 +8,7 @@ exports.userSignin = async (req, res, next) => {
         const payload = ticket.data
         const user = await User.findOne({ where: { googleId: payload.sub }})
         if (!user) {
-            res.status(200).send({ userId: null })
+            res.sendStatus(401)
         } else {
             await Log.create({ userId: user.userId })
             const token = await jwt.sign({ userId: user.userId, role: user.role, deptId: user.deptId, stdId: user.stdId }, process.env.JWT_KEY, { expiresIn: '1d' })

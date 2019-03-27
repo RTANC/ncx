@@ -7,7 +7,7 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
-        <v-btn color="error" flat v-if="$store.getters.user" @click="onSignOut">ลงชื่อออก</v-btn>
+        <v-btn color="error" flat v-if="$store.getters.user.userId" @click="onSignOut">ลงชื่อออก</v-btn>
       </v-toolbar-items>
     </v-toolbar>
 

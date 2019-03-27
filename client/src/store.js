@@ -5,7 +5,17 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: null
+    user: {
+      id_token: null,
+      avatar: null,
+      fullname: null,
+      email: null,
+      userId: null,
+      role: null,
+      deptId: null,
+      stdId: null,
+      token: null
+    }
   },
   getters: {
     user (state) {
@@ -19,11 +29,25 @@ export default new Vuex.Store({
         avatar: payload.avatar,
         fullname: payload.fullname,
         email: payload.email,
-        access_token: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWFjaGVySWQiOjEsImRlcHRJZCI6MH0.JjsO07iBBARJOoCN6cBUgVk0DKvvMOYLl1MlccFYc3Q'
+        userId: payload.userId,
+        role: payload.role,
+        deptId: payload.deptId,
+        stdId: payload.stdId,
+        token: payload.token
       }
     },
     signout (state) {
-      state.user = null
+      state.user = {
+        id_token: null,
+        avatar: null,
+        fullname: null,
+        email: null,
+        userId: null,
+        role: null,
+        deptId: null,
+        stdId: null,
+        token: null
+      }
     }
   },
   actions: {
