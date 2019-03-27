@@ -11,6 +11,11 @@ export default {
             headers: { 'Authorization': 'Basic ' + id_token }
         })
     },
+    register (data) {
+        return api.post('/registers', data, {
+            headers: { 'Authorization': 'Basic ' + id_token }
+        })
+    },
     createSubject (name) {
         return api.post('/subjects', { name: name })
     }

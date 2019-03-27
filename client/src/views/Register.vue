@@ -40,9 +40,16 @@
         </v-flex>
         <v-dialog v-model="dialog" persistent max-width="290">
             <v-card>
-                <v-card-title primary-title>
-                    title
+                <v-card-title primary-title class="headline">
+                    {{card.title}}
                 </v-card-title>
+                <v-card-text>
+                    {{card.text}}
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn :color="card.color" @click="(card.color == 'primary' ? signOut() : dialog = false)">ทราบ</v-btn>
+                </v-card-actions>
             </v-card>
         </v-dialog>
     </v-layout>
@@ -50,6 +57,7 @@
 </template>
 
 <script>
+import api from '@/services'
 export default {
     name: 'Register',
     data () {
@@ -77,17 +85,33 @@ export default {
     methods: {
         async register () {
             try {
-                
+                const user = await api.register({
+                    role: this.role,
+                    stdId: (this.role == 1) ? null : this.stdId
+                })
+                if (user.role == 1) {
+                    this.card.title = 'แจ้งทราบ'
+                    this.card.text = 'ลงทะเบียน Account สำเร็จ, รอการตรวจสอบจากผู้ดูแลระบบ'
+                    this.card.color = 'primary'
+                } else {
+                    this.card.title = 'แจ้งทราบ'
+                    this.card.text = 'ลงทะเบียน Account สำเร็จ, กรุณา Login ใหม่อีกครั้ง'
+                    this.card.color = 'primary'
+                }
             } catch (error) {
-                
+                this.card.title = 'ล้มเหลว'
+                this.card.text = 'ลงทะเบียน Account ล้มเหลว, กรุณาลองใหม่อีกครั้ง หรือติดต่อผู้ดูแลระบบ'
+                this.card.color = 'error'
+            } finally {
+                this.dialog = true
             }
         },
         signOut () {
+            this.dialog = false
             var auth2 = gapi.auth2.getAuthInstance()
             auth2.signOut().then(x => {
                 this.$store.dispatch('signout')
                 this.$router.push('/')
-                console.log('Signout')
             }).catch(error => {
                 console.log(error)
             })
