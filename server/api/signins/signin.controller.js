@@ -10,7 +10,9 @@ exports.userSignin = async (req, res, next) => {
         if (!user) {
             res.sendStatus(401)
         } else {
-            await Log.create({ userId: user.userId })
+            if ((user.role == 1 && user.deptId != null) || user.role == 2) {
+                await Log.create({ userId: user.userId })
+            }
             const token = await jwt.sign({ userId: user.userId, role: user.role, deptId: user.deptId, stdId: user.stdId }, process.env.JWT_KEY, { expiresIn: '1d' })
             res.status(200).send({
                 userId: user.userId,

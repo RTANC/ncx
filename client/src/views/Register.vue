@@ -33,7 +33,7 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" :disabled="!valid">ลงทะเบียน</v-btn>
+                    <v-btn color="primary" :disabled="!valid" @click="register">ลงทะเบียน</v-btn>
                     <v-btn @click="signOut();">ยกเลิก</v-btn>
                 </v-card-actions>
             </v-card>
@@ -88,8 +88,8 @@ export default {
                 const user = await api.register({
                     role: this.role,
                     stdId: (this.role == 1) ? null : this.stdId
-                })
-                if (user.role == 1) {
+                }, this.$store.getters.user.id_token)
+                if (user.data.role == 1) {
                     this.card.title = 'แจ้งทราบ'
                     this.card.text = 'ลงทะเบียน Account สำเร็จ, รอการตรวจสอบจากผู้ดูแลระบบ'
                     this.card.color = 'primary'
@@ -99,6 +99,7 @@ export default {
                     this.card.color = 'primary'
                 }
             } catch (error) {
+                console.log(error)
                 this.card.title = 'ล้มเหลว'
                 this.card.text = 'ลงทะเบียน Account ล้มเหลว, กรุณาลองใหม่อีกครั้ง หรือติดต่อผู้ดูแลระบบ'
                 this.card.color = 'error'

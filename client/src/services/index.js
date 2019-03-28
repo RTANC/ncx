@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const api = axios.create({
     baseURL: 'http://localhost:3000/api',
-    timeout: 1000
+    timeout: 5000
 })
 
 export default {
@@ -11,7 +11,7 @@ export default {
             headers: { 'Authorization': 'Basic ' + id_token }
         })
     },
-    register (data) {
+    register (data, id_token) {
         return api.post('/registers', data, {
             headers: { 'Authorization': 'Basic ' + id_token }
         })

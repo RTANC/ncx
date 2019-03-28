@@ -15,12 +15,20 @@
     </v-layout>
     <v-dialog v-model="dialog" persistent max-width="290">
       <v-card>
-        <v-card-title class="headline">แจ้งเตือน</v-card-title>
-        <v-card-text>ไม่พบ Account ของท่านในระบบ, ท่านต้องการลงทะเบียนเข้าใช้ระบบหรือไม่?</v-card-text>
+        <v-card-title class="headline">{{card.title}}</v-card-title>
+        <v-card-text>{{card.text}}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat @click="dialog = false;signOut();">ไม่ต้องการ</v-btn>
-          <v-btn color="primary" @click="dialog = false" :to="{ path: '/register' }">ต้องการ</v-btn>
+          <div v-if="card.type == 0">
+            <v-btn color="error" @click="dialog = false;">ทราบ</v-btn>
+          </div>
+          <div v-else-if="card.type == 1">
+            <v-btn flat @click="dialog = false;signOut();">ไม่ต้องการ</v-btn>
+            <v-btn color="primary" @click="dialog = false" :to="{ path: '/register' }">ต้องการ</v-btn>
+          </div>
+          <div v-else>
+            <v-btn color="primary" @click="dialog = false;signOut();">ทราบ</v-btn>
+          </div>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -36,7 +44,12 @@ export default {
   components: { GoogleSigninButton },
   data () {
     return {
-      dialog: false
+      dialog: false,
+      card: {
+        title: null,
+        text: null,
+        type: null
+      }
     }
   },
   methods: {
@@ -55,13 +68,42 @@ export default {
         token: null
       }
       this.$store.dispatch('signin', user)
-      const response = await api.signin(user.id_token)
-      // axios.defaults.headers.common['Authorization'] = this.$store.getters.user.access_token
-      // this.$router.push('Subject')
-      } catch (error) {
-        if (error.response.status == 401) {
+      const resp = await api.signin(user.id_token)
+      user.userId = resp.data.userId
+      user.role = resp.data.role
+      user.deptId = resp.data.deptId
+      user.stdId = resp.data.stdId
+      user.token = resp.data.token
+      this.$store.dispatch('signin', user)
+      if (user.role == 2) {
+        // Student go to Test Page
+        axios.defaults.headers.common['Authorization'] = this.$store.getters.user.token
+        this.$router.push('Test')
+      } else if (user.role == 1) {
+        if (user.deptId == null) {
+          //none validate account by admin
+          this.card.title = 'แจ้งทราบ'
+          this.card.text = 'Account ของท่านอยู่ในระหว่างการตรวจสอบจากผู้ดูแลระบบ'
+          this.card.type = 2
           this.dialog = true
+        } else{
+          axios.defaults.headers.common['Authorization'] = this.$store.getters.user.token
+          this.$router.push('Subject')
         }
+      }
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status == 401) {
+            this.card.title = 'การเข้าสู่ระบบล้มเหลว'
+            this.card.text = 'ไม่พบ Account ของท่านในระบบ, ท่านต้องการลงทะเบียนเข้าใช้ระบบหรือไม่?'
+            this.card.type = 1
+          }
+        } else {
+          this.card.title = 'ระบบผิดพลาด'
+          this.card.text = 'ไม่สามารถเชื่อมต่อระบบได้ กรุณาลองใหม่อีกครั้ง หรือติดต่อผู้ดูแลระบบ'
+          this.card.type = 0
+        }
+        this.dialog = true
       }
     },
     signOut () {
@@ -69,7 +111,6 @@ export default {
       auth2.signOut().then(x => {
         this.$store.dispatch('signout')
         this.$router.push('/')
-        console.log('Signout')
       }).catch(error => {
         console.log(error)
       })
