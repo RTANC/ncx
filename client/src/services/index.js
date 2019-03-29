@@ -18,5 +18,14 @@ export default {
     },
     createSubject (name) {
         return api.post('/subjects', { name: name })
+    },
+    listUsers () {
+        return api.get('/admins/users')
+    },
+    approveUser (uid, data) {
+        return api.patch('/admins/users/' + uid + '/approve', data)
+    },
+    deleteUser (uid) {
+        return api.delete('/admins/users/' + uid)
     }
 }

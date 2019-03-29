@@ -73,7 +73,7 @@ export default {
       user.role = resp.data.role
       user.deptId = resp.data.deptId
       user.stdId = resp.data.stdId
-      user.token = resp.data.token
+      user.token = 'Bearer ' + resp.data.token
       this.$store.dispatch('signin', user)
       if (user.role == 2) {
         // Student go to Test Page
@@ -90,6 +90,9 @@ export default {
           axios.defaults.headers.common['Authorization'] = this.$store.getters.user.token
           this.$router.push('Subject')
         }
+      } else if (user.role == 0) {
+        axios.defaults.headers.common['Authorization'] = this.$store.getters.user.token
+        this.$router.push('Admin')
       }
       } catch (error) {
         if (error.response) {

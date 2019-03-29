@@ -61,6 +61,6 @@ Topic.belongsTo(Subject, { foreignKey: 'subjectId', onDelete: 'cascade'})
 Topic.hasMany(Question, { foreignKey: 'topicId', onDelete: 'cascade' })
 Question.belongsTo(Topic, { foreignKey: 'topicId', onDelete: 'cascade' })
 
-sequelize.sync({ force: true })
+sequelize.sync({ force: false })
 
 module.exports = { User, Log, Subject, Topic, Question }

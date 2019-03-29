@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import Signin from './views/Signin.vue'
 import Subject from './views/Subject.vue'
 import Register from './views/Register.vue'
+import Admin from './views/Admin.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -23,6 +25,11 @@ export default new Router({
       path: '/register',
       name: 'Register',
       component: Register
+    },
+    {
+      path: '/admin',
+      name: 'Admin',
+      component: Admin
     }
   ]
 })
