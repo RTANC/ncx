@@ -27,7 +27,7 @@
                         <v-btn flat icon color="success">
                             <v-icon>help</v-icon>
                         </v-btn>
-                        <v-btn flat icon color="warning">
+                        <v-btn flat icon color="warning" @click="openDialogInEdit(subject);">
                             <v-icon>create</v-icon>
                         </v-btn>
                         <v-btn color="error" icon flat>
@@ -66,7 +66,7 @@
                                 <v-btn color="green" fab flat icon small v-if="subject.subjectId == null" @click="createSubject">
                                     <v-icon>save</v-icon>
                                 </v-btn>
-                                <v-btn color="warning" fab flat icon small v-else>
+                                <v-btn color="warning" fab flat icon small v-else @click="updateSubject">
                                     <v-icon>create</v-icon>
                                 </v-btn>
                             </v-flex>
@@ -121,6 +121,14 @@ export default {
         }
     },
     methods: {
+        async getSubjects () {
+            try {
+                const subjects = await api.getSubjects()
+                this.subjects = subjects.data
+            } catch (error) {
+                console.log(error)
+            }
+        },
         async createSubject () {
             try {
                 const subject = await api.createSubject(this.subject.name)
@@ -130,22 +138,57 @@ export default {
                 console.log(error)
             }
         },
-        createTopic () {
-            const topic = {
-                topicId: 1,
-                name: this.topic.name
+        async updateSubject () {
+            try {
+                await api.updateSubject(this.subject.subjectId, this.subject.name)
+            } catch (error) {
+                console.log(error)
             }
-            this.subject.topics.unshift(topic)
-            this.$refs.form.inputs[1].reset()
+        },
+        async deleteSubject () {
+            try {
+                
+            } catch (error) {
+                
+            }
+        },
+        async createTopic () {
+            try {
+                const response = await api.createTopic(this.subject.subjectId, this.topic.name)
+                const topic = {
+                    topicId: response.data.topicId,
+                    name: response.data.name
+                }
+                this.subject.topics.unshift(topic)
+                this.$refs.form.inputs[1].reset()
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        async updateTopic (topic) {
+            try {
+                await api.updateTopic(this.subject.subjectId, topic.topicId, topic.name)
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        openDialogInEdit (subject) {
+            this.subject = subject
+            this.dialog = true
         },
         clear () {
-            this.dialog = false;
             this.$refs.form.reset();
             this.subject = {
                 subjectId: null,
                 name: null,
-                topics: [{ topicId: null, name: null }]
+                topics: []
             }
+            this.topic = {
+                topicId: null,
+                name: null
+            }
+            this.getSubjects()
+            this.dialog = false;
         }
     },
     beforeMount () {
@@ -174,6 +217,7 @@ export default {
                     name: 'การใช้เทคโนโลยีเพื่อสืบค้นงานวิจัย'
                 }]
             }]
+            this.getSubjects()
         }
     }
 }
