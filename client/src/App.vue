@@ -10,7 +10,6 @@
         <v-btn color="error" flat v-if="$store.getters.user.userId && $route.path != '/'" @click="onSignOut">ลงชื่อออก</v-btn>
       </v-toolbar-items>
     </v-toolbar>
-
     <v-content>
       <v-img :src="require('../public/bg.png')" contain>
         <router-view/>

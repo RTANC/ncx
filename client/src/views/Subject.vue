@@ -30,7 +30,7 @@
                         <v-btn flat icon color="warning" @click="openDialogInEdit(subject);">
                             <v-icon>create</v-icon>
                         </v-btn>
-                        <v-btn color="error" icon flat>
+                        <v-btn color="error" icon flat @click="deleteSubject(subject.subjectId);">
                             <v-icon>delete</v-icon>
                         </v-btn>
                     </v-card-actions>
@@ -81,17 +81,19 @@
                                     <v-icon>add</v-icon>
                                 </v-btn>
                             </v-flex>
-                            <template v-for="(topic, index) in subject.topics">
-                                <v-flex xs9 :key="index">
+                        </v-layout>
+                        <template v-for="topic in subject.topics">
+                            <v-layout row wrap :key="topic.topicId">
+                                <v-flex xs9>
                                     <v-text-field label="ชื่อหัวข้อ" v-model="topic.name"></v-text-field>
                                 </v-flex>
-                                <v-flex xs3 :key="topic.topicId">
-                                    <v-btn color="warning" fab flat icon small>
+                                <v-flex xs3>
+                                    <v-btn color="warning" fab flat icon small @click="updateTopic(topic);">
                                         <v-icon>create</v-icon>
                                     </v-btn>
                                 </v-flex>
-                            </template>
-                        </v-layout>
+                            </v-layout>
+                        </template>
                     </v-container>
                 </v-form>
             </v-card-text>
@@ -132,8 +134,8 @@ export default {
         async createSubject () {
             try {
                 const subject = await api.createSubject(this.subject.name)
-                this.subject.subjectId = subject.subjectId
-                this.subject.name = subject.name
+                this.subject.subjectId = subject.data.subjectId
+                this.subject.name = subject.data.name
             } catch (error) {
                 console.log(error)
             }
@@ -145,12 +147,8 @@ export default {
                 console.log(error)
             }
         },
-        async deleteSubject () {
-            try {
-                
-            } catch (error) {
-                
-            }
+        deleteSubject (sid) {
+            
         },
         async createTopic () {
             try {
